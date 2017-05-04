@@ -1,0 +1,2 @@
+c:\\setup\\bts\\Configure-FinSuiteHostsInstances.ps1 -User <%= @username%> -Domain <%= @userdomain%> -Password <%= @userpassword%>
+[System.IO.File]::WriteAllText("c:\\setup\\bts\\_chefFinHostsInstancesConfigured.lock", "complete")

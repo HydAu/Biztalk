@@ -1,0 +1,21 @@
+AllCops:
+  Exclude:
+    - 'test/*/*/*/*'
+    - 'spec/*/*/*'
+    - Berksfile
+
+Metrics/LineLength:
+  Enabled: false
+  Max: 200
+
+EndOfLine:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Style/FileName:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false

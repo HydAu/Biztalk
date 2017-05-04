@@ -1,0 +1,62 @@
+$filename = "<% @config_file %>"
+
+ [System.Io.File]::copy($filename, "$filename.chefbak")
+
+ (Get-Content $fileName) | % {
+   if ($_ -cmatch "<configuration>") {
+     $_
+     '<configSections>
+       <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a" />
+      </configSections>
+        <log4net>
+      <appender name="LogFileAppender" type="log4net.Appender.RollingFileAppender">
+        <file value="D:\\Log\\name_FSP_LOG\\ApplicationLog.log" />
+      <appendToFile value="true" />
+        <rollingStyle value="Size" />
+      <maxSizeRollBackups value="-1" />
+        <maximumFileSize value="10MB" />
+      <staticLogFileName value="true" />
+      <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
+      <layout type="log4net.Layout.PatternLayout">
+
+          <conversionPattern
+              value="%newline%newline%date %newlinename.FSP.Log %level%newline>> %message%newline" />
+              </layout>
+            </appender>
+          <root>
+            <level value="ALL" />
+            <appender-ref ref="LogFileAppender" />
+          </root>
+
+       </log4net>
+
+       <system.serviceModel>
+        <bindings>
+            <basicHttpBinding>
+                <binding name="BasicHttpBinding_IAddressVerificationService" />
+		                <binding name="InvoiceSearchSoapBinding" />
+            </basicHttpBinding>
+        </bindings>
+        <client>
+            <endpoint address="http://worldomniws-int45.corp.jmfamily.com/AddressVerificationService/AddressVerificationService.svc"
+                binding="basicHttpBinding" bindingConfiguration="BasicHttpBinding_IAddressVerificationService"
+                contract="AddressVerificationServiceReference.IAddressVerificationService"
+                name="BasicHttpBinding_IAddressVerificationService" />
+	               <endpoint address="http://lawpa.c0xh.netaspx.com:80/LawsonVendorServices/InvoiceSearch"
+                 binding="basicHttpBinding" bindingConfiguration="InvoiceSearchSoapBinding"
+                 contract="InvoiceSearch.InvoiceSearch" name="InvoiceSearch" />
+        </client>
+    </system.serviceModel>'
+
+          }
+          else{
+                $_
+
+          }
+      } |
+      Set-Content $fileName
+
+      (Get-Content $fileName).replace('</configuration>', '<system.transactions>
+      <defaultSettings timeout="04:00:00" />
+      </system.transactions>
+        </configuration>') | Set-Content $fileName

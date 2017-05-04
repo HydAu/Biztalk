@@ -1,0 +1,29 @@
+
+[gpg4win]
+  ; Installer settings.  Do not define or leave empty for defaults.
+  inst_gpgol = true
+  inst_gpgex = true
+  inst_kleopatra = true
+  inst_gpa = true
+  inst_claws_mail = false
+  inst_compendium_de = true
+  inst_man_novice_en = true
+
+  ; Where to install short-cuts.
+  inst_start_menu = true
+  inst_desktop = false
+  inst_quick_launch_bar = false
+
+  ; Contrary to other settings in this file, the start menu folder
+  ; setting here will override the user selection at installation
+  ; time.
+  inst_start_menu_folder = Gpg4win
+
+  ; Additional configuration files to install.
+  gpg.conf = D:\config\gpg-site.conf
+  gpg-agent.conf = D:\config\gpg-agent-site.conf
+  trustlist.txt = D:\config\trustlist-site.txt
+  dirmngr.conf = D:\config\dirmngr-site.conf
+  dirmngr_ldapserver.conf = D:\config\dirmngr_ldapserver-site.conf
+  scdaemon.conf = D:\config\scdaemon-site.txt
+  gpa.conf = D:\config\gpa-site.conf

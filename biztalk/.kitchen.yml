@@ -1,0 +1,101 @@
+---
+driver:
+  name: ec2
+  shared_credentials_profile: abc_kitchen
+  aws_ssh_key_id: abc_xyz
+  security_group_ids: ["sg-******"]
+  region: us-east-1
+  availability_zone: b
+  require_chef_omnibus: true
+  instance_type: m4.large
+  iam_profile_name: abc_xyzkitchen
+  associate_public_ip: false
+  interface: private
+  subnet_id: subnet-*****
+  retryable_tries: 200
+  retryable_sleep: 8
+  tags:
+
+provisioner:
+  name: chef_zero
+
+# Uncomment to use inspec tests instead of serverspec.
+# verifier:
+#  name: inspec
+
+platforms:
+  - name: windows-2012
+    transport:
+      username: Administrator
+      ssh_key: <%= ENV['TRANSPORT_SSH_KEY'] %>
+    driver:
+      image_search:
+        owner-id: "*****"
+        tag-key: "Kitchen"
+        tag-value: "w12r2baseEncrypted"
+      retryable_tries: 10000
+      retryable_sleep: 30
+      block_device_mappings:
+        - device_name: /dev/sda1
+          ebs:
+            volume_type: gp2
+            volume_size: 100
+            delete_on_termination: true
+        - device_name: /dev/sdb
+          ebs:
+            volume_type: gp2
+            volume_size: 50
+            delete_on_termination: true
+
+  # - name: rhel-7
+  #   transport:
+  #     username: ec2-user
+  #     ssh_key: <%= ENV['TRANSPORT_SSH_KEY'] %>
+  #   driver:
+  #     image_search:
+  #       owner-id: "123456789"
+  #       tag-key: "Kitchen"
+  #       tag-value: "RHEL72Encrypted"
+  #     block_device_mappings:
+  #       - device_name: /dev/sdb
+  #         ebs:
+  #           volume_type: gp2
+  #           volume_size: 25
+  #           delete_on_termination: true
+
+  # - name: rhel-6
+  #   transport:
+  #     username: ec2-user
+  #     ssh_key: <%= ENV['TRANSPORT_SSH_KEY'] %>
+  #   driver:
+  #     image_search:
+  #       owner-id: "123456789"
+  #       tag-key: "Kitchen"
+  #       tag-value: "RHEL67Encrypted"
+  #     block_device_mappings:
+  #       - device_name: /dev/sdb
+  #         ebs:
+  #           volume_type: gp2
+  #           volume_size: 25
+  #           delete_on_termination: true
+suites:
+  - name: SQLServer
+    run_list:
+      - recipe[BIZTALK::DefaultSQL]
+      - recipe[BIZTALK::JoinDomain]
+      - recipe[BIZTALK::Restore_Local_XREF_Database]
+    attributes:
+      DeploymentStage: kitchen
+      AppName: biztalk
+      Role: btsstg
+
+  - name: defaultBiztalk
+    run_list:
+      - recipe[BIZTALK::default]
+      - recipe[BIZTALK::JoinDomain]
+      - recipe[BIZTALK::Configure_FinSuiteHosts]
+      - recipe[BIZTALK::Install_Local_FinSuiteApplications]
+    attributes:
+      DeploymentStage: kitchen
+      AppName: biztalk
+      Role: btsstg

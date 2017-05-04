@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <startup useLegacyV2RuntimeActivationPolicy="true">
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.0"/>
+  </startup>
+  <appSettings>
+    <add key="ServerInstance" value="@sqlserver" />
+    <add key="DatabaseName" value="EsbExceptionDb" />
+    <add key="BizTalkAdminGroup" value="BizTalk Server Administrators" />
+    <add key="BizTalkAppGroup" value="BizTalk Application Users" />
+    <add key="ExceptionWebSiteName" value="1" />
+    <add key="ExceptionUserAccount" value="<%= @BTS_LocalSvcIsoHostAccount %>" />
+    <add key="ExceptionBizTalkIsolatedHostGroup" value="BizTalk Isolated Host Users" />
+    <add key="ExceptionUserAccountPassword" value="<%= @BTS_LocalSvcIsoHostAccountPassword %>" />
+    <add key="CoreWebSiteName" value="1" />
+    <add key="CoreUserAccount" value="<%= @BTS_LocalSvcIsoHostAccount %>" />
+    <add key="CoreBizTalkIsolatedHostGroup" value="BizTalk Isolated Host Users" />
+    <add key="CoreUserAccountPassword" value="<%= @BTS_LocalSvcIsoHostAccountPassword %>" />
+    <add key="ItineraryServerInstance" value="@sqlserver" />
+    <add key="ItineraryDatabaseName" value="EsbItineraryDb" />
+    <add key="BizTalkIsolatedHostGroup" value="BizTalk Isolated Host Users" />
+    <add key="ItineraryBizTalkAppGroup" value="BizTalk Application Users" />
+    <add key="ItineraryBizTalkAdminGroup" value="BizTalk Server Administrators" />
+    <add key="ConfigurationSource" value="False" />
+    <add key="ApplicationName" value="" />
+    <add key="ContactInformation" value="" />
+    <add key="AdminGroupName" value="" />
+    <add key="UserGroupName" value="" />
+    <add key="ConfigurationFilePath" value="" />
+    <add key="DefaultDatabaseServer" value="@sqlserver" />
+    <add key="DefaultUserAccount" value="<%= @BTS_LocalSvcHostAccount %>" />
+  </appSettings>
+
+  <system.diagnostics>
+    <switches>
+      <!-- This switch controls general messages. In order to
+         receive general trace messages change the value to the
+         appropriate level. "1" gives error messages, "2" gives errors
+         and warnings, "3" gives more detailed error information, and
+         "4" gives verbose trace information -->
+      <add name="ESBConfigTool" value="4" />
+    </switches>
+    <trace autoflush="true" indentsize="4">
+      <listeners>
+        <!--<add name="EventLogListener"
+             type="System.Diagnostics.EventLogTraceListener"
+             initializeData="ESB Configuration Tool"/>-->
+        <add name="FileListener"
+             type="System.Diagnostics.TextWriterTraceListener"
+             initializeData="EsbConfigurationTool.log"/>
+      </listeners>
+    </trace>
+  </system.diagnostics>
+
+</configuration>

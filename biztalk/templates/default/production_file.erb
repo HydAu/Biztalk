@@ -1,0 +1,13 @@
+c0xhp2.oracle.netaspx.com =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+    (LOAD_BALANCE=OFF)
+    (FAILOVER=ON)
+      (ADDRESS = (PROTOCOL = TCP)(HOST = db25.netaspx.com)(PORT = 1521))
+      (ADDRESS = (PROTOCOL = TCP)(HOST = db26.netaspx.com)(PORT = 1521))
+    )
+    (CONNECT_DATA =
+      (SERVICE_NAME = c0xhp2.oracle.netaspx.com)
+      (FAILOVER_MODE = (TYPE=SELECT) (METHOD=BASIC))
+    )
+  )

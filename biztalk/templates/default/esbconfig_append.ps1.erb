@@ -1,0 +1,41 @@
+$filename = "C:\\Program Files (x86)\\Microsoft BizTalk ESB Toolkit\\esb.config"
+
+[System.Io.File]::copy($filename, "$filename.chefbak")
+
+ (Get-Content $fileName) | % {
+   if ($_ -cmatch "<itineraryServices>") {
+     $_
+     '<itineraryService id="91DDBEAB-FB6A-4783-A03D-E3F54458EB74" name="RecipientList" type="name.ESB.Core.Orchestrations.RecipientList,name.ESB.Core.Orchestrations, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Orchestration" stage="None"/>
+<itineraryService id="5A314C9A-23EC-4F23-A082-18F541643ED1" name="InboundSignalService" type="name.ESB.Core.ItineraryServices.InboundSignalService,name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="None"/>
+<itineraryService id="E64330D7-65D5-4F52-A7F0-6A00B7E700FE" name="ACKService" type="name.ESB.Core.ItineraryServices.AckRequired,name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="None"/>
+<itineraryService id="4e323w70-91f7-4e10-a203-b3c999b0f55e" name="FileReplaceService" type="name.ESB.Core.ItineraryServices.FileReplace, name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="AllReceive"/>
+<itineraryService id="6C72AD93-555F-42A1-8C5F-E4BC093DF6C9" name="MetadataService" type="name.ESB.Core.ItineraryServices.GenerateMetadata, name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="All"/>
+<itineraryService id="2d523c70-91f7-4e10-a203-b3c999b0f76c" name="XREFPostArchiveService" type="name.ESB.Core.ItineraryServices.XREFPostArchiveService, name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="None"/>
+<itineraryService id="321ABEA7-9DA6-4D13-9760-121178D120BE" name="LawsonConfiguration" type="name.ESB.Core.ItineraryServices.LawsonConfiguration,name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="None"/>
+<itineraryService id="7E40F857-15E9-4AD2-AF4E-3BC39A35B40F" name="LawsonConfigurationOutbound" type="name.ESB.Core.ItineraryServices.LawsonConfigurationOutbound,name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="None"/>
+<itineraryService id="3466F821-663A-4703-80E8-F3E34DB56A3A" name="name.ESB.Master.Orchestrations.XREFGetVendorCustomer" type="name.ESB.Master.Orchestrations.XREFGetVendorCustomer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1179a611c2c1ff15" scope="Orchestration" stage="None"/>
+<itineraryService id="4d223t70-91f7-4e10-a203-b3c999b0f55e" name="ArchiveService" type="name.ESB.Core.ItineraryServices.Archive, name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="AllReceive"/>
+<itineraryService id="4e323w70-91f7-4e10-a203-b3c999b0f55g" name="FTPConfiguration" type="name.ESB.Core.ItineraryServices.FTPConfiguration, name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="AllReceive"/>
+<itineraryService id="4e323w70-91f7-4e10-a203-b3c999b0f56f" name="RemovePrefix" type="name.ESB.Core.ItineraryServices.RemovePrefix, name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="AllReceive"/>
+'
+
+          }
+          else{
+                $_
+
+          }
+      } |
+      Set-Content $fileName
+
+      (Get-Content $fileName) | % {
+        if ($_ -cmatch "<adapterProviders>") {
+          $_
+          '<adapterProvider name="SFTP" type="name.ESB.Core.AdapterProviders.SFTPAdapterProvider, name.ESB.Core.AdapterProviders, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" moniker="SFTP"/>'
+
+               }
+               else{
+                   $_
+
+               }
+           } |
+           Set-Content $fileName

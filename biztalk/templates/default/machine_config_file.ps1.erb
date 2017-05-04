@@ -1,0 +1,13 @@
+
+$filename = "C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\CONFIG\\machine.config"
+
+
+(Get-Content $fileName).replace('<sectionGroup name="system.transactions" type="System.Transactions.Configuration.TransactionsSectionGroup, System.Transactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, Custom=null">','<sectionGroup name="system.transactions" type="System.Transactions.Configuration.TransactionsSectionGroup, System.Transactions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, Custom=null">') | Set-Content $filename
+(Get-Content $fileName).replace('<section name="defaultSettings" type="System.Transactions.Configuration.DefaultSettingsSection, System.Transactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, Custom=null"/>','<section name="defaultSettings" type="System.Transactions.Configuration.DefaultSettingsSection, System.Transactions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, Custom=null"/>') | Set-Content $filename
+(Get-Content $fileName).replace('<section name="machineSettings" type="System.Transactions.Configuration.MachineSettingsSection, System.Transactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, Custom=null" allowDefinition="MachineOnly" allowExeDefinition="MachineOnly"/>','<section name="machineSettings" type="System.Transactions.Configuration.MachineSettingsSection, System.Transactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, Custom=null" allowDefinition="MachineOnly" allowExeDefinition="MachineToApplication" />') | Set-Content $filename
+
+
+(Get-Content -Path $fileName).Replace('</configuration>', '<system.transactions>
+    <machineSettings maxTimeout="04:00:00" />
+  </system.transactions>
+  </configuration>') | Set-Content -Path $fileName

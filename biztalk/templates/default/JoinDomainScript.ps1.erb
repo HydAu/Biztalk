@@ -1,0 +1,7 @@
+$domain = "<%= @domain %>"
+$domainname = "<%= @domainname %>"
+$account = "<%= @account %>"
+$password = "<%= @password %>" | ConvertTo-SecureString -asPlainText -Force
+$username = "$domainname\$account"
+$credential = New-Object System.Management.Automation.PSCredential($username,$password)
+Add-Computer -DomainName $domain -credential $credential

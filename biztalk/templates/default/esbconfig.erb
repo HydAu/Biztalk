@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ESB configuration file mapped using File provider
+    Used as alternative to SSO configuration
+-->
+<configuration>
+  <configSections>
+    <section name="esb" type="Microsoft.Practices.ESB.Configuration.ESBConfigurationSection, Microsoft.Practices.ESB.Configuration, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <section name="esb.resolver" type="Microsoft.Practices.Unity.Configuration.UnityConfigurationSection,
+                 Microsoft.Practices.Unity.Configuration, Version=2.0.414.0,
+                 Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <section name="cachingConfiguration" type="Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.CacheManagerSettings, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0,Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <section name="instrumentationConfiguration" type="Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration.InstrumentationConfigurationSection, Microsoft.Practices.EnterpriseLibrary.Common, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+  </configSections>
+  <connectionStrings>
+    <add name="ItineraryDb" connectionString="Data Source=@sqlserver;Initial Catalog=EsbItineraryDb;Integrated Security=True" providerName="System.Data.SqlClient"/>
+    <!-- Default BAM EventStream is Message Event Stream(MES). Change the providerName to BES if Buffered Event Stream is required-->
+    <add name="BAMEventSource" connectionString="Integrated Security=SSPI;Data Source=.;Initial Catalog=BizTalkMsgBoxDb" providerName="MES"/>
+  </connectionStrings>
+  <!-- ESB configuration section -->
+
+  <esb>
+    <!-- validation settings used to validate the encryption X509 Certificate -->
+    <x509CertificateAuthentication certificateValidationMode="ChainTrust" revocationMode="Online"/>
+    <bizTalkInformation schemaAssembly="Microsoft.BizTalk.GlobalPropertySchemas, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <adapterMgr cacheManager="Adapter Cache Manager" absoluteExpiration="3600"/>
+    <itineraryPipelineCache cacheManager="Itinerary Pipeline Cache Manager" absoluteExpiration="3600"/>
+    <resolvers cacheManager="Resolver Providers Cache Manager" absoluteExpiration="3600">
+      <resolver name="UDDI" type="Microsoft.Practices.ESB.Resolver.UDDI.ResolveProvider, Microsoft.Practices.ESB.Resolver.UDDI, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+        <resolverConfig>
+          <add name="cacheTimeoutValue" value="120"/>
+          <add name="cacheName" value="UDDI Cache Manager"/>
+        </resolverConfig>
+      </resolver>
+		<resolver name="UDDI3" type="Microsoft.Practices.ESB.Resolver.UDDI3.ResolveProvider, Microsoft.Practices.ESB.Resolver.UDDI3, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+			<resolverConfig>
+				<add name="cacheTimeoutValue" value="120"/>
+				<add name="cacheName" value="UDDI Cache Manager"/>
+				<add name="publisherKey" value="esb"/>
+				<add name="baseUri" value="http://localhost/uddi"/>
+				<add name="publishUriSuffix" value="/publish.asmx"/>
+				<add name="inquireUriSuffix" value="/inquire.asmx"/>
+			</resolverConfig>
+		</resolver>
+      <resolver name="WSMEX" type="Microsoft.Practices.ESB.Resolver.WSMEX.ResolveProvider, Microsoft.Practices.ESB.Resolver.WSMEX, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+        <resolverConfig>
+          <add name="cacheTimeoutValue" value="120"/>
+          <add name="cacheName" value="WS-MEX Cache Manager"/>
+        </resolverConfig>
+      </resolver>
+      <resolver name="XPATH" type="Microsoft.Practices.ESB.Resolver.XPATH.ResolveProvider, Microsoft.Practices.ESB.Resolver.XPATH, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+      <resolver name="STATIC" type="Microsoft.Practices.ESB.Resolver.STATIC.ResolveProvider, Microsoft.Practices.ESB.Resolver.STATIC, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+      <resolver name="BRE" type="Microsoft.Practices.ESB.Resolver.BRE.ResolveProvider, Microsoft.Practices.ESB.Resolver.BRE, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+      <resolver name="BRI" type="Microsoft.Practices.ESB.Resolver.Unity.ResolveProvider, Microsoft.Practices.ESB.Resolver.Unity, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+        <resolverConfig>
+          <add name="unitySectionName" value="esb.resolver"/>
+          <add name="unityContainerName" value="BRI"/>
+        </resolverConfig>
+      </resolver>
+      <resolver name="ITINERARY" type="Microsoft.Practices.ESB.Resolver.Itinerary.StaticItineraryResolveProvider, Microsoft.Practices.ESB.Resolver.Itinerary, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+        <resolverConfig>
+          <add name="connectionStringName" value="ItineraryDb"/>
+          <add name="cacheTimeout" value="120"/>
+          <add name="cacheManagerName" value="Itinerary Cache Manager"/>
+        </resolverConfig>
+      </resolver>
+      <resolver name="ITINERARY-STATIC" type="Microsoft.Practices.ESB.Resolver.Unity.ResolveProvider, Microsoft.Practices.ESB.Resolver.Unity, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+        <resolverConfig>
+          <add name="unitySectionName" value="esb.resolver"/>
+          <add name="unityContainerName" value="ITINERARY"/>
+        </resolverConfig>
+      </resolver>
+		<resolver name="LDAP" type="Microsoft.Practices.ESB.Resolver.LDAP.ResolveProvider, Microsoft.Practices.ESB.Resolver.LDAP, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <resolver name="CONTEXT" type="Microsoft.Practices.ESB.Resolver.MessageContent.MessageContextResolver, Microsoft.Practices.ESB.Resolver.MessageContent, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <resolver name="BTDF-SSO" type="DeploymentFrameworkForBizTalk.ESB.Resolver.Sso.ResolveProvider, DeploymentFrameworkForBizTalk.ESB.Resolver.Sso.2.2, Version=2.2.0.0, Culture=neutral, PublicKeyToken=b9585ffc9d454e4a"/></resolvers>
+    <adapterProviders cacheManager="Adapter Providers Cache Manager" absoluteExpiration="3600">
+      <adapterProvider name="WCF-WSHttp" type="Microsoft.Practices.ESB.Adapter.WcfWSHttp.AdapterProvider, Microsoft.Practices.ESB.Adapter.WcfWSHttp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" moniker="Http,Https"/>
+      <adapterProvider name="WCF-BasicHttp" type="Microsoft.Practices.ESB.Adapter.WcfBasicHttp.AdapterProvider, Microsoft.Practices.ESB.Adapter.WcfBasicHttp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" moniker="Http,Https"/>
+		<adapterProvider name="WCF-Custom" type="Microsoft.Practices.ESB.Adapter.WcfCustom.AdapterProvider, Microsoft.Practices.ESB.Adapter.WcfCustom, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" moniker="mssql"/>
+		<adapterProvider name="SMTP" type="Microsoft.Practices.ESB.Adapter.SMTP.AdapterProvider, Microsoft.Practices.ESB.Adapter.SMTP, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" moniker="smtp"/>
+      <adapterProvider name="FTP" type="Microsoft.Practices.ESB.Adapter.FTP.AdapterProvider, Microsoft.Practices.ESB.Adapter.FTP, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+        <adapterConfig>
+          <add name="DefaultUsername" value="anonymous"/>
+          <add name="DefaultPassword" value=""/>
+        </adapterConfig>
+      </adapterProvider>
+      <adapterProvider name="MQSeries" type="Microsoft.Practices.ESB.Adapter.MQSeries.AdapterProvider, Microsoft.Practices.ESB.Adapter.MQSeries, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" moniker="MQS" adapterAssembly="MQSeries, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+      <adapterProvider name="FILE" type="Microsoft.Practices.ESB.Adapter.FILE.AdapterProvider, Microsoft.Practices.ESB.Adapter.FILE, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" moniker="File"/>
+      <adapterProvider name="MLLP" type="Microsoft.Practices.ESB.Adapter.MLLP.AdapterProvider, Microsoft.Practices.ESB.Adapter.MLLP, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+      <adapterProvider name="SFTP" type="name.ESB.Core.AdapterProviders.SFTPAdapterProvider, name.ESB.Core.AdapterProviders, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" moniker="SFTP"/>
+    </adapterProviders>
+	  <itineraryServices cacheManager="Itinerary Services Cache Manager" absoluteExpiration="3600">
+		  <itineraryService id="6a594d80-91f7-4e10-a203-b3c999b0f55e" name="Microsoft.Practices.ESB.Services.Routing" type="Microsoft.Practices.ESB.Itinerary.Services.RoutingService, Microsoft.Practices.ESB.Itinerary.Services, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" scope="Messaging" stage="AllReceive"/>
+		  <itineraryService id="774488bc-e5b9-4a4e-9ae7-d25cdf23fd1c" name="Microsoft.Practices.ESB.Services.Routing" type="Microsoft.Practices.ESB.Agents.Delivery, Microsoft.Practices.ESB.Agents, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" scope="Orchestration" stage="None"/>
+		  <itineraryService id="cfbe36c5-d85c-44e9-9549-4a7abf2106c5" name="Microsoft.Practices.ESB.Services.Transform" type="Microsoft.Practices.ESB.Itinerary.Services.TransformationService, Microsoft.Practices.ESB.Itinerary.Services, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" scope="Messaging" stage="All"/>
+		  <itineraryService id="92d3b293-e6d4-44a1-b27d-c42b48aec667" name="Microsoft.Practices.ESB.Services.Transform" type="Microsoft.Practices.ESB.Agents.Transform, Microsoft.Practices.ESB.Agents, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" scope="Orchestration" stage="None"/>
+		  <itineraryService id="977f085f-9f6d-4c18-966f-90bed114f649" name="Microsoft.Practices.ESB.Services.SendPort" type="Microsoft.Practices.ESB.Itinerary.Services.SendPortService, Microsoft.Practices.ESB.Itinerary.Services, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" scope="Invocation" stage="AllReceive"/>
+      <itineraryService id="4810569C-8FF2-4162-86CE-47692A0B4017" name="Microsoft.Practices.ESB.Itinerary.Services.Broker.MessagingBroker" type="Microsoft.Practices.ESB.Itinerary.Services.Broker.MessagingBroker, Microsoft.Practices.ESB.Itinerary.Services.Broker, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" scope="Messaging" stage="All" serviceCategory="Broker"/>
+	<itineraryService id="91DDBEAB-FB6A-4783-A03D-E3F54458EB74" name="RecipientList" type="name.ESB.Core.Orchestrations.RecipientList,name.ESB.Core.Orchestrations, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Orchestration" stage="None"/>
+	<itineraryService id="5A314C9A-23EC-4F23-A082-18F541643ED1" name="InboundSignalService" type="name.ESB.Core.ItineraryServices.InboundSignalService,name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="None"/>
+	<itineraryService id="E64330D7-65D5-4F52-A7F0-6A00B7E700FE" name="ACKService" type="name.ESB.Core.ItineraryServices.AckRequired,name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="None"/>
+	<itineraryService id="4e323w70-91f7-4e10-a203-b3c999b0f55e" name="FileReplaceService" type="name.ESB.Core.ItineraryServices.FileReplace, name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="AllReceive"/>
+	<itineraryService id="6C72AD93-555F-42A1-8C5F-E4BC093DF6C9" name="MetadataService" type="name.ESB.Core.ItineraryServices.GenerateMetadata, name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="All"/>
+	<itineraryService id="2d523c70-91f7-4e10-a203-b3c999b0f76c" name="XREFPostArchiveService" type="name.ESB.Core.ItineraryServices.XREFPostArchiveService, name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="None"/>
+	<itineraryService id="321ABEA7-9DA6-4D13-9760-121178D120BE" name="LawsonConfiguration" type="name.ESB.Core.ItineraryServices.LawsonConfiguration,name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="None"/>
+	<itineraryService id="7E40F857-15E9-4AD2-AF4E-3BC39A35B40F" name="LawsonConfigurationOutbound" type="name.ESB.Core.ItineraryServices.LawsonConfigurationOutbound,name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="None"/>
+	<itineraryService id="3466F821-663A-4703-80E8-F3E34DB56A3A" name="name.ESB.Master.Orchestrations.XREFGetVendorCustomer" type="name.ESB.Master.Orchestrations.XREFGetVendorCustomer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1179a611c2c1ff15" scope="Orchestration" stage="None"/>
+	<itineraryService id="4d223t70-91f7-4e10-a203-b3c999b0f55e" name="ArchiveService" type="name.ESB.Core.ItineraryServices.Archive, name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="AllReceive"/>
+	<itineraryService id="4e323w70-91f7-4e10-a203-b3c999b0f55g" name="FTPConfiguration" type="name.ESB.Core.ItineraryServices.FTPConfiguration, name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="AllReceive"/>
+	<itineraryService id="4e323w70-91f7-4e10-a203-b3c999b0f56f" name="RemovePrefix" type="name.ESB.Core.ItineraryServices.RemovePrefix, name.ESB.Core.ItineraryServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=fe29824631848dbf" scope="Messaging" stage="AllReceive"/>
+	  </itineraryServices>
+    <filters cacheManager="Filter Cache Manager" absoluteExpiration="3600">
+      <filter name="XPATH" type="Microsoft.Practices.ESB.Filters.XPath.XPathFilter, Microsoft.Practices.ESB.Filters.XPath, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      </filter>
+    </filters>
+	  <itineraryOM cacheManager="ItineraryOM Cache Manager" absoluteExpiration="3600">
+		  <add name="Itinerary" namespace="http://schemas.microsoft.biztalk.practices.esb.com/itinerary" type="Microsoft.Practices.ESB.Itinerary.OM.V1.ItineraryV1, Microsoft.Practices.ESB.Itinerary.OM.V1, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+	  </itineraryOM>
+    <extendedConfig>
+      <add name="CustomSetting" value="BRI"/>
+    </extendedConfig>
+  </esb>
+  <!-- BRE configuration section-->
+  <esb.resolver xmlns="http://schemas.microsoft.com/practices/2010/unity&gt;">
+    <!-- Lifetime manager types -->
+    <alias alias="singleton" type="Microsoft.Practices.Unity.ContainerControlledLifetimeManager, Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+     <!-- std type providers -->
+    <alias alias="string" type="System.String, mscorlib"/>
+    <alias alias="int" type="System.Int32, mscorlib"/>
+    <alias alias="bool" type="System.Boolean, mscorlib"/>
+      <!-- repository providers -->
+    <alias alias="IRepositoryProvider" type="Microsoft.Practices.ESB.Resolver.Itinerary.Facts.Repository.IRepositoryProvider, Microsoft.Practices.ESB.Resolver.Itinerary.Facts, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <alias alias="SqlRepositoryProvider" type="Microsoft.Practices.ESB.Resolver.Itinerary.DataAccess.SqlRepositoryProvider, Microsoft.Practices.ESB.Resolver.Itinerary.DataAccess, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+      <!-- fact providers -->
+    <alias alias="IFactProvider" type="Microsoft.Practices.ESB.Resolver.Facts.IFactProvider, Microsoft.Practices.ESB.Resolver.Facts, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <alias alias="IFactTranslator" type="Microsoft.Practices.ESB.Resolver.Facts.IFactTranslator, Microsoft.Practices.ESB.Resolver.Facts, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <alias alias="ItineraryFactProvider" type="Microsoft.Practices.ESB.Resolver.Itinerary.Facts.ItineraryFactProvider, Microsoft.Practices.ESB.Resolver.Itinerary.Facts, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <alias alias="ItineraryStaticFactProvider" type="Microsoft.Practices.ESB.Resolver.Itinerary.Facts.ItineraryStaticFactProvider, Microsoft.Practices.ESB.Resolver.Itinerary.Facts, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <alias alias="ItineraryHeaderFactProvider" type="Microsoft.Practices.ESB.Resolver.Itinerary.Facts.ItineraryHeaderFactProvider, Microsoft.Practices.ESB.Resolver.Itinerary.Facts, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+	  <alias alias="ItineraryContentsFactProvider" type="Microsoft.Practices.ESB.Resolver.Itinerary.Facts.ItineraryContentsFactProvider, Microsoft.Practices.ESB.Resolver.Itinerary.Facts, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <alias alias="ResolutionFactProvider" type="Microsoft.Practices.ESB.Resolver.Itinerary.Facts.ResolutionFactProvider, Microsoft.Practices.ESB.Resolver.Itinerary.Facts, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <alias alias="DefaultFactTranslator" type="Microsoft.Practices.ESB.Resolver.Facts.DefaultFactTranslator, Microsoft.Practices.ESB.Resolver.Facts, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <alias alias="ItineraryFactTranslator" type="Microsoft.Practices.ESB.Resolver.Itinerary.Facts.ItineraryFactTranslator, Microsoft.Practices.ESB.Resolver.Itinerary.Facts, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <alias alias="ItineraryContentsFactTranslator" type="Microsoft.Practices.ESB.Resolver.Itinerary.Facts.ItineraryContentsFactTranslator, Microsoft.Practices.ESB.Resolver.Itinerary.Facts, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+      <!-- resolve providers -->
+    <alias alias="IResolveProvider" type="Microsoft.Practices.ESB.Resolver.IResolveProvider, Microsoft.Practices.ESB.Resolver, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    <alias alias="ItineraryResolveProvider" type="Microsoft.Practices.ESB.Resolver.Itinerary.BREItineraryResolverContainer,Microsoft.Practices.ESB.Resolver.Itinerary, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35 "/>
+    <alias alias="StaticItineraryResolveProvider" type="Microsoft.Practices.ESB.Resolver.Itinerary.StaticItineraryResolveContainer,Microsoft.Practices.ESB.Resolver.Itinerary, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35 "/>
+    <!-- test containers -->
+    <container name="BRI">
+      <register type="IResolveProvider" mapTo="ItineraryResolveProvider"/>
+      <register type="IFactProvider" mapTo="ItineraryFactProvider" name="ItineraryFactProvider">
+        <lifetime type="singleton"/>
+      </register>
+      <register type="IRepositoryProvider" mapTo="SqlRepositoryProvider" name="CurrentRepositoryProvider">
+        <lifetime type="singleton"/>
+        <constructor>
+          <param name="connectionStringName">
+            <value value="ItineraryDb"/>
+          </param>
+          <param name="cacheManagerName">
+            <value value="Itinerary Cache Manager"/>
+          </param>
+          <param name="cacheTimeout">
+            <value value="120"/>
+          </param>
+        </constructor>
+      </register>
+      <register type="IFactTranslator" mapTo="DefaultFactTranslator" name="DefaultFactTranslator">
+        <lifetime type="singleton"/>
+      </register>
+      <register type="IFactTranslator" mapTo="ItineraryFactTranslator" name="ItineraryFactTranslator">
+        <lifetime type="singleton"/>
+        <constructor>
+          <param name="repositoryProvider">
+            <dependency name="CurrentRepositoryProvider"/>
+          </param>
+        </constructor>
+      </register>
+    </container>
+    <container name="ITINERARY">
+      <register type="IResolveProvider" mapTo="StaticItineraryResolveProvider"/>
+      <register type="IRepositoryProvider" mapTo="SqlRepositoryProvider" name="CurrentRepositoryProvider">
+        <lifetime type="singleton"/>
+        <constructor>
+          <param name="connectionStringName">
+            <value value="ItineraryDb"/>
+          </param>
+          <param name="cacheManagerName">
+            <value value="Itinerary Cache Manager"/>
+          </param>
+          <param name="cacheTimeout">
+            <value value="120"/>
+          </param>
+        </constructor>
+      </register>
+      <register type="IFactProvider" mapTo="ResolutionFactProvider" name="ResolutionFactProvider"/>
+		  <register type="IFactProvider" mapTo="ItineraryHeaderFactProvider" name="HeaderFactProvider"/>
+      <register type="IFactProvider" mapTo="ItineraryStaticFactProvider" name="StaticFactProvider"/>
+      <register type="IFactProvider" mapTo="ItineraryContentsFactProvider" name="ItineraryContentsFactProvider"/>
+      <register type="IFactTranslator" mapTo="DefaultFactTranslator" name="DefaultFactTranslator">
+        <lifetime type="singleton"/>
+      </register>
+      <register type="IFactTranslator" mapTo="ItineraryFactTranslator" name="ItineraryFactTranslator">
+        <lifetime type="singleton"/>
+        <constructor>
+          <param name="repositoryProvider">
+            <dependency name="CurrentRepositoryProvider"/>
+          </param>
+        </constructor>
+      </register>
+      <register type="IFactTranslator" mapTo="ItineraryContentsFactTranslator" name="ItineraryContentsFactTranslator">
+			  <lifetime type="singleton"/>
+				<constructor>
+				  <param name="overrideExistingItinerary">
+					  <value value="False"/>
+					</param>
+				</constructor>
+		  </register>
+    </container>
+  </esb.resolver>
+  <!-- Instrumentation Configuration Section -->
+  <instrumentationConfiguration performanceCountersEnabled="false" eventLoggingEnabled="false" wmiEnabled="false" applicationInstanceName=""/>
+
+  <!-- Caching ConfigurationSection -->
+  <cachingConfiguration defaultCacheManager="Default Cache Manager">
+    <backingStores>
+      <add name="inMemory" type="Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations.NullBackingStore, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0,Culture=neutral, PublicKeyToken=31bf3856ad364e35"/>
+    </backingStores>
+    <cacheManagers>
+      <add name="Default Cache Manager" type="Microsoft.Practices.EnterpriseLibrary.Caching.CacheManager, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0,Culture=neutral, PublicKeyToken=31bf3856ad364e35" expirationPollFrequencyInSeconds="60" maximumElementsInCacheBeforeScavenging="1000" numberToRemoveWhenScavenging="10" backingStoreName="inMemory"/>
+      <add name="Itinerary Cache Manager" type="Microsoft.Practices.EnterpriseLibrary.Caching.CacheManager, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0,Culture=neutral, PublicKeyToken=31bf3856ad364e35" expirationPollFrequencyInSeconds="60" maximumElementsInCacheBeforeScavenging="1000" numberToRemoveWhenScavenging="10" backingStoreName="inMemory"/>
+      <add name="UDDI Cache Manager" type="Microsoft.Practices.EnterpriseLibrary.Caching.CacheManager, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0,Culture=neutral, PublicKeyToken=31bf3856ad364e35" expirationPollFrequencyInSeconds="2" maximumElementsInCacheBeforeScavenging="1000" numberToRemoveWhenScavenging="10" backingStoreName="inMemory"/>
+      <add name="WS-MEX Cache Manager" type="Microsoft.Practices.EnterpriseLibrary.Caching.CacheManager, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0,Culture=neutral, PublicKeyToken=31bf3856ad364e35" expirationPollFrequencyInSeconds="60" maximumElementsInCacheBeforeScavenging="1000" numberToRemoveWhenScavenging="10" backingStoreName="inMemory"/>
+      <add name="Resolver Providers Cache Manager" type="Microsoft.Practices.EnterpriseLibrary.Caching.CacheManager, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0,Culture=neutral, PublicKeyToken=31bf3856ad364e35" expirationPollFrequencyInSeconds="60" maximumElementsInCacheBeforeScavenging="1000" numberToRemoveWhenScavenging="10" backingStoreName="inMemory"/>
+      <add name="Adapter Providers Cache Manager" type="Microsoft.Practices.EnterpriseLibrary.Caching.CacheManager, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0,Culture=neutral, PublicKeyToken=31bf3856ad364e35" expirationPollFrequencyInSeconds="60" maximumElementsInCacheBeforeScavenging="1000" numberToRemoveWhenScavenging="10" backingStoreName="inMemory"/>
+      <add name="Adapter Cache Manager" type="Microsoft.Practices.EnterpriseLibrary.Caching.CacheManager, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0,Culture=neutral, PublicKeyToken=31bf3856ad364e35" expirationPollFrequencyInSeconds="60" maximumElementsInCacheBeforeScavenging="1000" numberToRemoveWhenScavenging="10" backingStoreName="inMemory"/>
+      <add name="Itinerary Pipeline Cache Manager" type="Microsoft.Practices.EnterpriseLibrary.Caching.CacheManager, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0,Culture=neutral, PublicKeyToken=31bf3856ad364e35" expirationPollFrequencyInSeconds="60" maximumElementsInCacheBeforeScavenging="1000" numberToRemoveWhenScavenging="10" backingStoreName="inMemory"/>
+		<add name="Itinerary Services Cache Manager" type="Microsoft.Practices.EnterpriseLibrary.Caching.CacheManager, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0,Culture=neutral, PublicKeyToken=31bf3856ad364e35" expirationPollFrequencyInSeconds="60" maximumElementsInCacheBeforeScavenging="1000" numberToRemoveWhenScavenging="10" backingStoreName="inMemory"/>
+		<add name="ItineraryOM Cache Manager" type="Microsoft.Practices.EnterpriseLibrary.Caching.CacheManager, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0,Culture=neutral, PublicKeyToken=31bf3856ad364e35" expirationPollFrequencyInSeconds="60" maximumElementsInCacheBeforeScavenging="1000" numberToRemoveWhenScavenging="10" backingStoreName="inMemory"/>
+		<add name="Filter Cache Manager" type="Microsoft.Practices.EnterpriseLibrary.Caching.CacheManager, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0,Culture=neutral, PublicKeyToken=31bf3856ad364e35" expirationPollFrequencyInSeconds="60" maximumElementsInCacheBeforeScavenging="1000" numberToRemoveWhenScavenging="10" backingStoreName="inMemory"/>
+	</cacheManagers>
+  </cachingConfiguration>
+</configuration>
